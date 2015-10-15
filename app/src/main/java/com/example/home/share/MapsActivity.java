@@ -1,6 +1,9 @@
 package com.example.home.share;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.location.Criteria;
 import android.location.Location;
@@ -75,6 +78,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
         int shapeSize = getResources().getDimensionPixelSize(R.dimen.shape_size);
 
         Drawable shapeDrawable = ResourcesCompat.getDrawable(getResources(), R.drawable.circle_marker, null);
+        shapeDrawable.setColorFilter(Color.CYAN, PorterDuff.Mode.MULTIPLY);
         i.setBackground(shapeDrawable);
 
         // Create a view container to set the size
