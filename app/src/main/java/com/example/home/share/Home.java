@@ -30,8 +30,8 @@ public class Home extends ListActivity {
         String selectedItem = (String) getListView().getItemAtPosition(position);
         //String selectedItem = (String) getListAdapter().getItem(position);
         Intent intent = new Intent(Home.this, MapsActivity.class);
-        Bundle b =new Bundle();
-        b.putString("user",user);
+        Bundle b = new Bundle();
+        b.putString("user", user);
         intent.putExtras(b);
         startActivity(intent);
     }

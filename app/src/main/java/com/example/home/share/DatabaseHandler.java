@@ -187,6 +187,17 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             return "";
     }
 
+    public int checkUser(String user) {
+        String selectQuery = "SELECT  * FROM " + TABLE_USERS + " where " + KEY_NAME + " = '" + user + "'";
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            return 1;
+        }
+        return -1;
+    }
+
     // Deleting single contact
 //    public void deleteContact(Contact contact) {
 //        SQLiteDatabase db = this.getWritableDatabase();

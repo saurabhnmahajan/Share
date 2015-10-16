@@ -20,5 +20,13 @@ public class MainActivity extends Activity {
                 startActivity(intent);
             }
         });
+        Button login = (Button)findViewById(R.id.login);
+        login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, Login.class);
+                startActivity(intent);
+            }
+        });
     }
 }
