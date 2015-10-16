@@ -3,6 +3,7 @@ package com.example.home.share;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,17 +12,17 @@ import android.widget.ListView;
 
 
 public class Home extends ListActivity {
-    String list[] = {"loc1", "loc2","loc3"};
     DatabaseHandler db = new DatabaseHandler(this);
     String user;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        ArrayAdapter<String> myAdapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,list);
-        setListAdapter(myAdapter);
         Bundle b = getIntent().getExtras();
         user= b.getString("user");
+        String list[] = db.getAllContacts(user);
+        ArrayAdapter<String> myAdapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,list);
+        setListAdapter(myAdapter);
     }
     @Override
     protected void onListItemClick(ListView list, View view, int position, long id) {

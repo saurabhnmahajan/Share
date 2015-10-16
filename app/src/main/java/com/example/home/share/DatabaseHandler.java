@@ -125,6 +125,26 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
     }
 
+    // Getting All Contacts
+    public String[] getAllContacts(String user) {
+        // Select All Query
+        int id = findUserId(user);
+        String selectQuery = "SELECT contact FROM " + TABLE_USER_CONTACTS + " where " + KEY_USER_ID + " ='" + id + "'";
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        String str[] = new String[cursor.getCount()];
+        int index = 0;
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Log.d("data",cursor.getString(0));
+                str[index] = cursor.getString(0);
+                index++;
+            } while (cursor.moveToNext());
+        }
+        return str;
+    }
+    
     // Updating single user
     public int updateUserLocation(String user, double Latitude, double Longitude) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -169,16 +189,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 //        db.close();
 //    }
 
-//    // Getting contacts Count
-//    public int getContactsCount() {
-//        String countQuery = "SELECT  * FROM " + TABLE_CONTACTS;
-//        SQLiteDatabase db = this.getReadableDatabase();
-//        Cursor cursor = db.rawQuery(countQuery, null);
-//        cursor.close();
-//
-//        // return count
-//        return cursor.getCount();
-//    }
+
 
     // Getting single contact
 //    Contact getContact(int id) {
