@@ -59,6 +59,7 @@ public class Home extends ListActivity {
         else if (id == R.id.action_logout) {
             db.loggedUser(user, "OUT");
             Intent intent = new Intent(Home.this,Launcher.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);

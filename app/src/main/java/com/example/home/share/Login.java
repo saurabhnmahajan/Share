@@ -25,6 +25,7 @@ public class Login extends Activity {
                 EditText userName = (EditText)findViewById(R.id.userName);
                 user = userName.getText().toString();
                 if(db.checkUser(user) > 0) {
+                    db.loggedUser(user, "IN");
                     Intent intent = new Intent(Login.this, Home.class);
                     Bundle b = new Bundle();
                     b.putString("user", user);
@@ -33,7 +34,7 @@ public class Login extends Activity {
                     startActivity(intent);
                 }
                 else {
-                    Toast.makeText(getApplicationContext(), "Invalid User", Toast.LENGTH_LONG);
+                    Toast.makeText(getApplicationContext(), "Invalid User", Toast.LENGTH_LONG).show();
                     userName.setText("");
                 }
             }
