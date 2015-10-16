@@ -4,6 +4,7 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,7 +17,7 @@ import android.widget.ListView;
 
 public class Home extends ListActivity {
     DatabaseHandler db = new DatabaseHandler(this);
-    String user,list[];
+    String user, list[], selectedContacts = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,17 +32,21 @@ public class Home extends ListActivity {
         listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             @Override
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
-                if(checked)
+                if(checked) {
                     listView.getChildAt(position).setBackgroundColor(Color.LTGRAY);
-                else
+                    selectedContacts += list[position] + ", ";
+                }
+                else {
                     listView.getChildAt(position).setBackgroundColor(Color.TRANSPARENT);
-
+                    selectedContacts = selectedContacts.replace(list[position]+", ", "");
+                }
+                Log.d("Selected", selectedContacts);
             }
             @Override
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                 MenuInflater inflater = getMenuInflater();
-                inflater.inflate(R.menu.menu_home, menu);
-                mode.setTitle("Select Items");
+                inflater.inflate(R.menu.menu_home_selected, menu);
+                mode.setTitle("Select Contacts");
                 return true;
             }
 
