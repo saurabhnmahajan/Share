@@ -105,8 +105,18 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
                     .setMyLocationButtonEnabled(false);
             mMap.getUiSettings()
                     .setAllGesturesEnabled(true);
+            String selectedContacts =  "'sm'";
+            String loc[][] = db.getSelectedContactsLocation(selectedContacts);
             com.google.android.gms.maps.model.LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
             boundsBuilder.include(latLng);
+            for(int contact = 0; contact < loc.length; contact++) {
+                double tmp_long = Double.parseDouble(loc[contact][2]), tmp_lat = Double.parseDouble(loc[contact][1]);
+                LatLng tmp = new LatLng(tmp_lat, tmp_long);
+                boundsBuilder.include(tmp);
+                mMap.addMarker(new MarkerOptions().position(tmp)
+                        .anchor(0.5f, 0.5f)
+                        .icon(BitmapDescriptorFactory.fromBitmap(bitmap)));
+            }
             LatLngBounds bounds = boundsBuilder.build();
             zoomLvl = CameraUpdateFactory.newLatLngBounds(bounds, 10 , 10, 0);
             mMap.animateCamera(zoomLvl);

@@ -198,6 +198,23 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return -1;
     }
 
+    public String[][] getSelectedContactsLocation(String users) {
+        String selectQuery = "SELECT name, latitude, longitude FROM " + TABLE_USERS + " where " + KEY_NAME + " IN (" + users + ")";
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        String loc[][] = new String[cursor.getCount()][3];
+        int contact = 0;
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                loc[contact][0] = cursor.getString(0);
+                loc[contact][1] = cursor.getString(1);
+                loc[contact][2] = cursor.getString(2);
+            }while(cursor.moveToNext());
+
+        }
+        return loc;
+    }
     // Deleting single contact
 //    public void deleteContact(Contact contact) {
 //        SQLiteDatabase db = this.getWritableDatabase();
