@@ -53,9 +53,13 @@ public class Home extends ListActivity {
             //add user to your list
             db.addContact(user, "ABC");
         }
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        else if (id == R.id.action_settings) {
             return true;
+        }
+        else if (id == R.id.action_logout) {
+            db.loggedUser(user, "OUT");
+            Intent intent = new Intent(Home.this,Launcher.class);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }

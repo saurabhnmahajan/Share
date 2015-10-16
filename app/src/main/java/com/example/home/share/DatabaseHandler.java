@@ -165,9 +165,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             values.put(KEY_STATUS, status); // User Name
             // Inserting Row
             db.insert(TABLE_LOGGED, null, values);
-            db.close(); // Closing database connection
             Log.d("table", "inserted");
         }
+        else if(status.equals("OUT")){
+            db.delete(TABLE_LOGGED, KEY_NAME + " = ?",
+                new String[] {user});
+            Log.d("table", "deleted");
+        }
+        db.close(); // Closing database connection
     }
 
     public String getLoggedUser() {
@@ -181,6 +186,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         else
             return "";
     }
+
     // Deleting single contact
 //    public void deleteContact(Contact contact) {
 //        SQLiteDatabase db = this.getWritableDatabase();
