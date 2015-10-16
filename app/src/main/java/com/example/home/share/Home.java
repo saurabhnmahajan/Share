@@ -12,6 +12,7 @@ import android.widget.ListView;
 
 public class Home extends ListActivity {
     String list[] = {"loc1", "loc2","loc3"};
+    DatabaseHandler db = new DatabaseHandler(this);
     String user;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +50,7 @@ public class Home extends ListActivity {
         int id = item.getItemId();
         if(id == R.id.add_user) {
             //add user to your list
+            db.addContact(user, "ABC");
         }
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {

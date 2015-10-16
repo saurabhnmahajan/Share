@@ -19,6 +19,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     // table names
     private static final String TABLE_USERS = "user_locations";
     private static final String TABLE_LOGGED = "user_logged";
+    private static final String TABLE_USER_CONTACTS = "user_contacts";
 
     // columns
     private static final String KEY_ID = "id";
@@ -26,6 +27,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String KEY_LATITUDE = "latitude";
     private static final String KEY_LONGITUDE = "longitude";
     private static final String KEY_STATUS = "status";
+    private static final String KEY_CONTACT = "contact";
+    private static final String KEY_USER_ID = "user_id";
 
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -43,6 +46,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         String table_logged = "CREATE TABLE " + TABLE_LOGGED + "("
                 + KEY_NAME + " TEXT," + KEY_STATUS + " TEXT" +")";
         db.execSQL(table_logged);
+        String table_user_contacts = "CREATE TABLE " + TABLE_USER_CONTACTS + "("
+                + KEY_ID + " INTEGER PRIMARY KEY," + KEY_USER_ID + " INTEGER,"
+                + KEY_CONTACT + " TEXT,"
+                + KEY_LATITUDE + " NUMERIC,"
+                + KEY_LONGITUDE + " NUMERIC" +")";
+        db.execSQL(table_user_contacts);
         Log.d("table", "created");
     }
 
@@ -70,13 +79,39 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // Inserting Row
         db.insert(TABLE_USERS, null, values);
         db.close(); // Closing database connection
-        Log.d("table", "inserted");
+        Log.d("user_table", "inserted");
+    }
+
+    void addContact(String user, String contact) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        int id = findUserId(user);
+        values.put(KEY_USER_ID, id); // User Name
+        values.put(KEY_CONTACT, contact); // User Name
+        values.put(KEY_LATITUDE, 0);
+        values.put(KEY_LONGITUDE, 0);
+
+        // Inserting Row
+        db.insert(TABLE_USER_CONTACTS, null, values);
+        db.close(); // Closing database connection
+        Log.d("contact_table", "inserted");
+    }
+
+    int findUserId(String name) {
+        String selectQuery = "SELECT id FROM " + TABLE_USERS + " where " + KEY_NAME + " ='" + name +"'";
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            return cursor.getInt(0);
+        }
+        return -1;
     }
 
     // Getting All Users
-    public void getAllContacts() {
+    public void getAllUsers() {
         // Select All Query
-        String selectQuery = "SELECT  * FROM " + TABLE_USERS;
+        String selectQuery = "SELECT * FROM " + TABLE_USERS;
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         // looping through all rows and adding to list
@@ -90,7 +125,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
     }
 
-    // Updating single contact
+    // Updating single user
     public int updateUserLocation(String user, double Latitude, double Longitude) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
