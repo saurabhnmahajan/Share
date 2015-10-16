@@ -2,40 +2,76 @@ package com.example.home.share;
 
 import android.app.ListActivity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.ActionMode;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 
 public class Home extends ListActivity {
     DatabaseHandler db = new DatabaseHandler(this);
-    String user;
+    String user,list[];
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         Bundle b = getIntent().getExtras();
         user= b.getString("user");
-        String list[] = db.getAllContacts(user);
-        ArrayAdapter<String> myAdapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,list);
+        list = db.getAllContacts(user);
+        final ArrayAdapter<String> myAdapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,list);
         setListAdapter(myAdapter);
+        final ListView listView = getListView();
+        listView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
+        listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+            @Override
+            public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+                if(checked)
+                    listView.getChildAt(position).setBackgroundColor(Color.LTGRAY);
+                else
+                    listView.getChildAt(position).setBackgroundColor(Color.TRANSPARENT);
+
+            }
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                MenuInflater inflater = getMenuInflater();
+                inflater.inflate(R.menu.menu_home, menu);
+                mode.setTitle("Select Items");
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                return false;
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+
+            }
+        });
     }
+
     @Override
     protected void onListItemClick(ListView list, View view, int position, long id) {
         super.onListItemClick(list, view, position, id);
         String selectedItem = (String) getListView().getItemAtPosition(position);
-        //String selectedItem = (String) getListAdapter().getItem(position);
         Intent intent = new Intent(Home.this, MapsActivity.class);
         Bundle b = new Bundle();
         b.putString("user", user);
         intent.putExtras(b);
         startActivity(intent);
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
