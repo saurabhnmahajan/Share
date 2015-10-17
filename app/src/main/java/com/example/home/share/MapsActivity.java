@@ -105,7 +105,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
                     .setMyLocationButtonEnabled(false);
             mMap.getUiSettings()
                     .setAllGesturesEnabled(true);
-            String selectedContacts =  "'sm'";
+            String selectedContacts =  b.getString("selectedContacts");
             String loc[][] = db.getSelectedContactsLocation(selectedContacts);
             com.google.android.gms.maps.model.LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
             boundsBuilder.include(latLng);

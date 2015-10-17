@@ -34,11 +34,13 @@ public class Home extends ListActivity {
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
                 if(checked) {
                     listView.getChildAt(position).setBackgroundColor(Color.LTGRAY);
-                    selectedContacts += list[position] + ", ";
+                    selectedContacts += "'" + list[position] + "', ";
                 }
                 else {
                     listView.getChildAt(position).setBackgroundColor(Color.TRANSPARENT);
-                    selectedContacts = selectedContacts.replace(list[position]+", ", "");
+                    String selected = "'" + list[position] +"', ";
+                    int pos = selectedContacts.indexOf(selected);
+                    selectedContacts = selectedContacts.substring(0,pos) + selectedContacts.substring(pos + selected.length());
                 }
                 Log.d("Selected", selectedContacts);
             }
@@ -62,7 +64,19 @@ public class Home extends ListActivity {
 
             @Override
             public void onDestroyActionMode(ActionMode mode) {
-
+                listView.clearChoices();
+                for (int i = 0; i < listView.getCount(); i++)
+                    listView.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
+                Log.d("SelectedContacts", selectedContacts);
+                selectedContacts = selectedContacts.substring(0,selectedContacts.lastIndexOf(','));
+                Log.d("SelectedContacts", selectedContacts);
+                Intent intent = new Intent(Home.this, MapsActivity.class);
+                Bundle b = new Bundle();
+                b.putString("user", user);
+                b.putString("selectedContacts", selectedContacts);
+                intent.putExtras(b);
+                startActivity(intent);
+                selectedContacts = "";
             }
         });
     }
