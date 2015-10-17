@@ -49,9 +49,13 @@ public class Home extends ListActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if(id == R.id.add_user) {
+        if(id == R.id.action_contact) {
             //add user to your list
-            db.addContact(user, "ABC");
+            Intent intent = new Intent(Home.this, AddContact.class);
+            Bundle b = new Bundle();
+            b.putString("user", user);
+            intent.putExtras(b);
+            startActivity(intent);
         }
         else if (id == R.id.action_settings) {
             return true;
