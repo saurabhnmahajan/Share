@@ -34,12 +34,12 @@
             android:label="APP" >
         </activity>
         <activity
-            android:name=".AddUser"
+            android:name=".RegisterUser"
             android:label="@string/title_activity_add_user" >
         </activity>
         <activity
             android:name=".MainActivity"
-            android:label="APP">
+            android:label="APP" >
         </activity>
         <activity
             android:name=".Launcher"
@@ -47,8 +47,13 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".AddContact"
+            android:label="@string/title_activity_add_contact" >
         </activity>
     </application>
 

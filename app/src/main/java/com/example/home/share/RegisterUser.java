@@ -8,12 +8,12 @@ import android.widget.Button;
 import android.widget.EditText;
 
 
-public class AddUser extends Activity {
+public class RegisterUser extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_user);
+        setContentView(R.layout.activity_register_user);
         final EditText userId = (EditText)findViewById(R.id.userName);
         Button register = (Button)findViewById(R.id.register);
         register.setOnClickListener(new View.OnClickListener() {
@@ -22,7 +22,7 @@ public class AddUser extends Activity {
                 final DatabaseHandler db = new DatabaseHandler(getApplicationContext());
                 db.addUser(userId.getText().toString());
                 db.loggedUser(userId.getText().toString(), "IN");
-                Intent intent = new Intent(AddUser.this, Home.class);
+                Intent intent = new Intent(RegisterUser.this, Home.class);
                 Bundle b =new Bundle();
                 b.putString("user",userId.getText().toString());
                 intent.putExtras(b);

@@ -8,4 +8,5 @@
     <string name="title_activity_add_user">AddUser</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_launcher">Launcher</string>
+    <string name="title_activity_add_contact">AddContact</string>
 </resources>
