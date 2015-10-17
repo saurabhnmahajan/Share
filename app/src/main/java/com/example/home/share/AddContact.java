@@ -18,7 +18,7 @@ public class AddContact extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_contact);
-        final Bundle b = new Bundle();
+        final Bundle b = getIntent().getExtras();
         user = b.getString("user");
         Button search = (Button)findViewById(R.id.search);
         search.setOnClickListener(new View.OnClickListener() {
@@ -27,8 +27,8 @@ public class AddContact extends Activity {
                 EditText contact = (EditText)findViewById(R.id.search_contacts);
                 db.addContact(user, contact.getText().toString());
                 Intent intent = new Intent(AddContact.this, Home.class);
-                b.putString("user", user);
                 intent.putExtras(b);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
             }
         });

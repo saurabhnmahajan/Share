@@ -117,8 +117,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
-                Log.d("data",cursor.getString(0));
-                Log.d("data",cursor.getString(1));
+                Log.d("data", cursor.getString(0));
+                Log.d("data", cursor.getString(1));
                 Log.d("data", cursor.getString(2));
                 Log.d("data", cursor.getString(3));
             } while (cursor.moveToNext());
@@ -146,14 +146,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
     
     // Updating single user
-    public int updateUserLocation(String user, double Latitude, double Longitude) {
+    public void updateUserLocation(String user, double Latitude, double Longitude) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(KEY_LATITUDE, Latitude);
         values.put(KEY_LONGITUDE, Longitude);
 
         // updating row
-        return db.update(TABLE_USERS, values, KEY_NAME + " = ?",
+        db.update(TABLE_USERS, values, KEY_NAME + " = ?",
                 new String[]{user});
     }
 
@@ -165,12 +165,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             values.put(KEY_STATUS, status); // User Name
             // Inserting Row
             db.insert(TABLE_LOGGED, null, values);
-            Log.d("table", "inserted");
         }
         else if(status.equals("OUT")){
             db.delete(TABLE_LOGGED, KEY_NAME + " = ?",
-                new String[] {user});
-            Log.d("table", "deleted");
+                    new String[]{user});
         }
         db.close(); // Closing database connection
     }
@@ -210,6 +208,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 loc[contact][0] = cursor.getString(0);
                 loc[contact][1] = cursor.getString(1);
                 loc[contact][2] = cursor.getString(2);
+                contact++;
             }while(cursor.moveToNext());
 
         }

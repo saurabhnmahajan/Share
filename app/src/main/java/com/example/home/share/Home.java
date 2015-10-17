@@ -22,7 +22,7 @@ public class Home extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         Bundle b = getIntent().getExtras();
-        user= b.getString("user");
+        user = b.getString("user");
         contacts = db.getAllContacts(user);
         final ArrayAdapter<String> myAdapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,contacts);
         setListAdapter(myAdapter);
