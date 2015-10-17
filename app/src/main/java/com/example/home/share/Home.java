@@ -4,7 +4,6 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,33 +16,32 @@ import android.widget.ListView;
 
 public class Home extends ListActivity {
     DatabaseHandler db = new DatabaseHandler(this);
-    String user, list[], selectedContacts = "";
+    String user, contacts[], selectedContacts = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         Bundle b = getIntent().getExtras();
         user= b.getString("user");
-        list = db.getAllContacts(user);
-        final ArrayAdapter<String> myAdapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,list);
+        contacts = db.getAllContacts(user);
+        final ArrayAdapter<String> myAdapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,contacts);
         setListAdapter(myAdapter);
         final ListView listView = getListView();
         listView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
         listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             @Override
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
-                if(checked) {
+                if (checked) {
                     listView.getChildAt(position).setBackgroundColor(Color.LTGRAY);
-                    selectedContacts += "'" + list[position] + "', ";
-                }
-                else {
+                    selectedContacts += "'" + contacts[position] + "', ";
+                } else {
                     listView.getChildAt(position).setBackgroundColor(Color.TRANSPARENT);
-                    String selected = "'" + list[position] +"', ";
+                    String selected = "'" + contacts[position] + "', ";
                     int pos = selectedContacts.indexOf(selected);
-                    selectedContacts = selectedContacts.substring(0,pos) + selectedContacts.substring(pos + selected.length());
+                    selectedContacts = selectedContacts.substring(0, pos) + selectedContacts.substring(pos + selected.length());
                 }
-                Log.d("Selected", selectedContacts);
             }
+
             @Override
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                 MenuInflater inflater = getMenuInflater();
@@ -67,9 +65,7 @@ public class Home extends ListActivity {
                 listView.clearChoices();
                 for (int i = 0; i < listView.getCount(); i++)
                     listView.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
-                Log.d("SelectedContacts", selectedContacts);
-                selectedContacts = selectedContacts.substring(0,selectedContacts.lastIndexOf(','));
-                Log.d("SelectedContacts", selectedContacts);
+                selectedContacts = selectedContacts.substring(0, selectedContacts.lastIndexOf(','));
                 Intent intent = new Intent(Home.this, MapsActivity.class);
                 Bundle b = new Bundle();
                 b.putString("user", user);
@@ -85,9 +81,11 @@ public class Home extends ListActivity {
     protected void onListItemClick(ListView list, View view, int position, long id) {
         super.onListItemClick(list, view, position, id);
         String selectedItem = (String) getListView().getItemAtPosition(position);
+        String selectedContact = "'" + contacts[position] + "'";
         Intent intent = new Intent(Home.this, MapsActivity.class);
         Bundle b = new Bundle();
         b.putString("user", user);
+        b.putString("selectedContacts", selectedContact);
         intent.putExtras(b);
         startActivity(intent);
     }
