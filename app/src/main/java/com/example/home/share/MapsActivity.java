@@ -14,6 +14,8 @@ import android.os.Bundle;
 import android.support.v4.content.res.ResourcesCompat;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.amulyakhare.textdrawable.TextDrawable;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -113,9 +115,31 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
                 double tmp_long = Double.parseDouble(loc[contact][2]), tmp_lat = Double.parseDouble(loc[contact][1]);
                 LatLng tmp = new LatLng(tmp_lat, tmp_long);
                 boundsBuilder.include(tmp);
+
+                IconGenerator icons = new IconGenerator(getApplicationContext());
+                // Define the size you want from dimensions file
+                TextDrawable drawable1 = TextDrawable.builder()
+                        .beginConfig()
+                        .width(60)  // width in px
+                        .height(60) // height in px
+                        .bold()
+                        .endConfig()
+                        .buildRound("SM", Color.RED);
+                icons.setBackground(drawable1);
+
+                // Create a view container to set the size
+                View view1 = new View(this);
+                view1.setLayoutParams(new ViewGroup.LayoutParams(shapeSize, shapeSize));
+
+                icons.setContentView(view1);
+                final Bitmap bitmap1 = icons.makeIcon();
+
+
+
+
                 mMap.addMarker(new MarkerOptions().position(tmp)
                         .anchor(0.5f, 0.5f)
-                        .icon(BitmapDescriptorFactory.fromBitmap(bitmap)));
+                        .icon(BitmapDescriptorFactory.fromBitmap(bitmap1)));
             }
             LatLngBounds bounds = boundsBuilder.build();
             zoomLvl = CameraUpdateFactory.newLatLngBounds(bounds, 10 , 10, 0);
