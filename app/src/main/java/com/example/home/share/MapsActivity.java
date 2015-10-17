@@ -10,7 +10,6 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -29,6 +28,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
     CameraUpdate zoomLvl;
     DatabaseHandler db = new DatabaseHandler(this);
     String user, selectedContacts;
+    int colorCounter = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,7 +98,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
         }
     }
     public void createCustomMarker(LatLng latLng, String text) {
-
+        int color[] = {Color.RED, Color.BLUE, Color.CYAN, Color.GREEN, Color.DKGRAY};
         IconGenerator icons = new IconGenerator(getApplicationContext());
         int shapeSize = getResources().getDimensionPixelSize(R.dimen.shape_size);
         // Define the size you want from dimensions file
@@ -109,9 +109,12 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
                 .bold()
                 .toUpperCase()
                 .endConfig()
-                .buildRound(text, Color.RED);
+                .buildRound(text, color[colorCounter]);
         icons.setBackground(drawable);
-
+        colorCounter++;
+        if( colorCounter > color.length) {
+            colorCounter = 0;
+        }
         View view = new View(this);
         view.setLayoutParams(new ViewGroup.LayoutParams(shapeSize, shapeSize));
 
