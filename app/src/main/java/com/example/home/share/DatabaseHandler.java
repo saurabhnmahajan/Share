@@ -17,13 +17,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "users";
 
     // table names
-    private static final String TABLE_USERS = "user_locations";
+    private static final String TABLE_USERS = "users";
     private static final String TABLE_LOGGED = "user_logged";
     private static final String TABLE_USER_CONTACTS = "user_contacts";
 
     // columns
     private static final String KEY_ID = "id";
     private static final String KEY_NAME = "name";
+    private static final String KEY_EMAIL = "email";
+    private static final String KEY_PASSWORD = "password";
     private static final String KEY_LATITUDE = "latitude";
     private static final String KEY_LONGITUDE = "longitude";
     private static final String KEY_STATUS = "status";
@@ -40,11 +42,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String table_users = "CREATE TABLE " + TABLE_USERS + "("
                 + KEY_ID + " INTEGER PRIMARY KEY," + KEY_NAME + " TEXT,"
+                + KEY_EMAIL + " TEXT," + KEY_PASSWORD + " TEXT,"
                 + KEY_LATITUDE + " NUMERIC,"
                 + KEY_LONGITUDE + " NUMERIC" +")";
         db.execSQL(table_users);
         String table_logged = "CREATE TABLE " + TABLE_LOGGED + "("
-                + KEY_NAME + " TEXT," + KEY_STATUS + " TEXT" +")";
+                + KEY_EMAIL + " TEXT," + KEY_STATUS + " TEXT" +")";
         db.execSQL(table_logged);
         String table_user_contacts = "CREATE TABLE " + TABLE_USER_CONTACTS + "("
                 + KEY_ID + " INTEGER PRIMARY KEY," + KEY_USER_ID + " INTEGER,"
@@ -69,10 +72,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      * All CRUD(Create, Read, Update, Delete) Operations
      */
 
-    void addUser(String user) {
+    void addUser(String name, String email, String password) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(KEY_NAME, user); // User Name
+        values.put(KEY_NAME, name);
+        values.put(KEY_EMAIL, email);
+        values.put(KEY_PASSWORD, password);
         values.put(KEY_LATITUDE, 0);
         values.put(KEY_LONGITUDE, 0);
 
@@ -86,8 +91,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         int id = findUserId(user);
-        values.put(KEY_USER_ID, id); // User Name
-        values.put(KEY_CONTACT, contact); // User Name
+        values.put(KEY_USER_ID, id);
+        values.put(KEY_CONTACT, contact);
         values.put(KEY_LATITUDE, 0);
         values.put(KEY_LONGITUDE, 0);
 
@@ -97,8 +102,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         Log.d("contact_table", "inserted");
     }
 
-    int findUserId(String name) {
-        String selectQuery = "SELECT id FROM " + TABLE_USERS + " where " + KEY_NAME + " ='" + name +"'";
+    int findUserId(String email) {
+        String selectQuery = "SELECT id FROM " + TABLE_USERS + " where " + KEY_EMAIL + " ='" + email +"'";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         // looping through all rows and adding to list
@@ -146,35 +151,35 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
     
     // Updating single user
-    public void updateUserLocation(String user, double Latitude, double Longitude) {
+    public void updateUserLocation(String email, double Latitude, double Longitude) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(KEY_LATITUDE, Latitude);
         values.put(KEY_LONGITUDE, Longitude);
 
         // updating row
-        db.update(TABLE_USERS, values, KEY_NAME + " = ?",
-                new String[]{user});
+        db.update(TABLE_USERS, values, KEY_EMAIL + " = ?",
+                new String[]{email});
     }
 
-    public void loggedUser(String user, String status) {
+    public void loggedUser(String email, String status) {
         SQLiteDatabase db = this.getWritableDatabase();
         if(status.equals("IN")) {
             ContentValues values = new ContentValues();
-            values.put(KEY_NAME, user); // User Name
+            values.put(KEY_EMAIL, email); // User Name
             values.put(KEY_STATUS, status); // User Name
             // Inserting Row
             db.insert(TABLE_LOGGED, null, values);
         }
         else if(status.equals("OUT")){
-            db.delete(TABLE_LOGGED, KEY_NAME + " = ?",
-                    new String[]{user});
+            db.delete(TABLE_LOGGED, KEY_EMAIL + " = ?",
+                    new String[]{email});
         }
         db.close(); // Closing database connection
     }
 
     public String getLoggedUser() {
-        String selectQuery = "SELECT  * FROM " + TABLE_LOGGED;
+        String selectQuery = "SELECT * FROM " + TABLE_LOGGED;
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         // looping through all rows and adding to list
@@ -185,8 +190,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             return "";
     }
 
-    public int checkUser(String user) {
-        String selectQuery = "SELECT  * FROM " + TABLE_USERS + " where " + KEY_NAME + " = '" + user + "'";
+    public int checkUser(String email) {
+        String selectQuery = "SELECT  * FROM " + TABLE_USERS + " where " + KEY_EMAIL + " = '" + email + "'";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         // looping through all rows and adding to list
@@ -197,7 +202,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     public String[][] getSelectedContactsLocation(String users) {
-        String selectQuery = "SELECT name, latitude, longitude FROM " + TABLE_USERS + " where " + KEY_NAME + " IN (" + users + ")";
+        String selectQuery = "SELECT email, latitude, longitude FROM " + TABLE_USERS + " where " + KEY_EMAIL + " IN (" + users + ")";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         String loc[][] = new String[cursor.getCount()][3];
@@ -215,7 +220,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     public String[] search(String searchString) {
-        String selectQuery = "SELECT name FROM " + TABLE_USERS + " where " + KEY_NAME + " LIKE '%" + searchString + "%'";
+        String selectQuery = "SELECT email FROM " + TABLE_USERS + " where " + KEY_EMAIL + " LIKE '%" + searchString + "%'";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         String contacts[] = new String[cursor.getCount()];
