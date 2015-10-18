@@ -5,7 +5,8 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.support.v4.app.FragmentActivity;
-import android.os.Bundle;import com.google.android.gms.maps.CameraUpdate;
+import android.os.Bundle;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;import com.google.android.gms.maps.model.LatLng;
@@ -120,7 +121,11 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
         mClusterManager.setOnClusterClickListener(new ClusterManager.OnClusterClickListener<MyLocation>() {
             @Override
             public boolean onClusterClick(Cluster<MyLocation> cluster) {
-                return false;
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                                cluster.getPosition(), (float) Math.floor(mMap
+                                        .getCameraPosition().zoom + 1)), 300,
+                        null);
+                return true;
             }
         });
     }
