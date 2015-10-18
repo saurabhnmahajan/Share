@@ -19,6 +19,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.clustering.ClusterItem;
+import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.ui.IconGenerator;
 
 public class MapsActivity extends FragmentActivity implements LocationListener {
@@ -29,6 +31,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
     DatabaseHandler db = new DatabaseHandler(this);
     String email, selectedContacts;
     int colorCounter = 0;
+    ClusterManager<MyLocation> mClusterManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +64,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
                 .setMyLocationButtonEnabled(false);
         mMap.getUiSettings()
                 .setAllGesturesEnabled(true);
+        setUpCluster();
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         String bestProvider = locationManager.getBestProvider(criteria, true);
@@ -75,25 +79,28 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
     public void onLocationChanged(Location location) {
         double latitude = location.getLatitude();
         double longitude = location.getLongitude();
+        addItems(latitude, longitude);
         Bundle b = getIntent().getExtras();
         email = b.getString("email");
         selectedContacts =  b.getString("selectedContacts");
         db.updateUserLocation(email, latitude, longitude);
         final LatLng latLng = new LatLng(latitude, longitude);
+        createCustomMarker(latLng, email.substring(0,1));
+        String loc[][] = db.getSelectedContactsLocation(selectedContacts);
+        LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
+        boundsBuilder.include(latLng);
+        for(int contact = 0; contact < loc.length; contact++) {
+            double tmp_lat = Double.parseDouble(loc[contact][1]), tmp_lng = Double.parseDouble(loc[contact][2]);
+            addItems(tmp_lat, tmp_lng);
+            LatLng tmp = new LatLng(tmp_lat, tmp_lng);
+            boundsBuilder.include(tmp);
+            createCustomMarker(tmp, loc[contact][0].substring(0,1));
+        }
+        LatLngBounds bounds = boundsBuilder.build();
+        zoomLvl = CameraUpdateFactory.newLatLngBounds(bounds, 10 , 10, 0);
+        mClusterManager.cluster();
         if (flag) {
             flag = false;
-            createCustomMarker(latLng, email.substring(0,1));
-            String loc[][] = db.getSelectedContactsLocation(selectedContacts);
-            LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
-            boundsBuilder.include(latLng);
-            for(int contact = 0; contact < loc.length; contact++) {
-                double tmp_lat = Double.parseDouble(loc[contact][1]), tmp_long = Double.parseDouble(loc[contact][2]);
-                LatLng tmp = new LatLng(tmp_lat, tmp_long);
-                boundsBuilder.include(tmp);
-                createCustomMarker(tmp, loc[contact][0].substring(0,1));
-            }
-            LatLngBounds bounds = boundsBuilder.build();
-            zoomLvl = CameraUpdateFactory.newLatLngBounds(bounds, 10 , 10, 0);
             mMap.animateCamera(zoomLvl);
         }
     }
@@ -137,5 +144,27 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
     @Override
     public void onProviderDisabled(String provider) {
 
+    }
+
+
+    private void setUpCluster() {
+        // Initialize the manager with the context and the map.
+        // (Activity extends context, so we can pass 'this' in the constructor.)
+        mClusterManager = new ClusterManager<MyLocation>(this, mMap);
+
+        // Point the map's listeners at the listeners implemented by the cluster
+        // manager.
+        mClusterManager.setRenderer(new ClusterMarker(this, mMap, mClusterManager));
+        mMap.setOnCameraChangeListener(mClusterManager);
+        mMap.setOnMarkerClickListener(mClusterManager);
+
+        // Add cluster items (markers) to the cluster manager.
+    }
+
+    private void addItems(double lat, double lng) {
+
+        // Add ten cluster items in close proximity, for purposes of this example.
+        MyLocation offsetItem = new MyLocation(lat, lng);
+        mClusterManager.addItem(offsetItem);
     }
 }
