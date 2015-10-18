@@ -209,11 +209,26 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 loc[contact][1] = cursor.getString(1);
                 loc[contact][2] = cursor.getString(2);
                 contact++;
-            }while(cursor.moveToNext());
-
+            } while(cursor.moveToNext());
         }
         return loc;
     }
+
+    public String[] search(String searchString) {
+        String selectQuery = "SELECT name FROM " + TABLE_USERS + " where " + KEY_NAME + " LIKE '%" + searchString + "%'";
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        String contacts[] = new String[cursor.getCount()];
+        int count = 0;
+        if (cursor.moveToFirst()) {
+            do {
+                contacts[count] = cursor.getString(0);
+                count++;
+            } while(cursor.moveToNext());
+        }
+        return contacts;
+    }
+
     // Deleting single contact
 //    public void deleteContact(Contact contact) {
 //        SQLiteDatabase db = this.getWritableDatabase();
@@ -221,21 +236,4 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 //                new String[] { String.valueOf(contact.getID()) });
 //        db.close();
 //    }
-
-
-
-    // Getting single contact
-//    Contact getContact(int id) {
-//        SQLiteDatabase db = this.getReadableDatabase();
-//        Cursor cursor = db.query(TABLE_CONTACTS, new String[] { KEY_ID,
-//                        KEY_NAME, KEY_PH_NO }, KEY_ID + "=?",
-//                new String[] { String.valueOf(id) }, null, null, null, null);
-//        if (cursor != null)
-//            cursor.moveToFirst();
-//        Contact contact = new Contact(Integer.parseInt(cursor.getString(0)),
-//                cursor.getString(1), cursor.getString(2));
-//        // return contact
-//        return contact;
-//    }
-
 }
