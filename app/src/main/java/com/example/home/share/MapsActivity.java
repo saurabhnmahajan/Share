@@ -27,7 +27,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
     private boolean flag = true;
     CameraUpdate zoomLvl;
     DatabaseHandler db = new DatabaseHandler(this);
-    String user, selectedContacts;
+    String email, selectedContacts;
     int colorCounter = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,13 +76,13 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
         double latitude = location.getLatitude();
         double longitude = location.getLongitude();
         Bundle b = getIntent().getExtras();
-        user = b.getString("user");
+        email = b.getString("email");
         selectedContacts =  b.getString("selectedContacts");
-        db.updateUserLocation(user, latitude, longitude);
+        db.updateUserLocation(email, latitude, longitude);
         final LatLng latLng = new LatLng(latitude, longitude);
         if (flag) {
             flag = false;
-            createCustomMarker(latLng, user.substring(0,1));
+            createCustomMarker(latLng, email.substring(0,1));
             String loc[][] = db.getSelectedContactsLocation(selectedContacts);
             LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
             boundsBuilder.include(latLng);

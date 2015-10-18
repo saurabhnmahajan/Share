@@ -12,11 +12,11 @@ public class Launcher extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launcher);
         DatabaseHandler db = new DatabaseHandler(this);
-        String user = db.getLoggedUser();
-        if(user.length() > 0) {
+        String email = db.getLoggedUser();
+        if(email.length() > 0) {
             Intent intent = new Intent(Launcher.this, Home.class);
             Bundle b = new Bundle();
-            b.putString("user", user);
+            b.putString("email", email);
             intent.putExtras(b);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);

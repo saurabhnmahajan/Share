@@ -131,9 +131,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     // Getting All Contacts
-    public String[] getAllContacts(String user) {
+    public String[] getAllContacts(String email) {
         // Select All Query
-        int id = findUserId(user);
+        int id = findUserId(email);
         String selectQuery = "SELECT contact FROM " + TABLE_USER_CONTACTS + " where " + KEY_USER_ID + " ='" + id + "'";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);

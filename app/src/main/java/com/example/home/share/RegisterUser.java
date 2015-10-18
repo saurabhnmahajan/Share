@@ -28,7 +28,7 @@ public class RegisterUser extends Activity {
                 db.loggedUser(email, "IN");
                 Intent intent = new Intent(RegisterUser.this, Home.class);
                 Bundle b =new Bundle();
-                b.putString("user", email);
+                b.putString("email", email);
                 intent.putExtras(b);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);

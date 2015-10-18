@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 
 public class Login extends Activity {
-    private String user;
+    private String email;
     DatabaseHandler db = new DatabaseHandler(this);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,12 +23,12 @@ public class Login extends Activity {
             @Override
             public void onClick(View v) {
                 EditText userName = (EditText)findViewById(R.id.userName);
-                user = userName.getText().toString();
-                if(db.checkUser(user) > 0) {
-                    db.loggedUser(user, "IN");
+                email = userName.getText().toString();
+                if(db.checkUser(email) > 0) {
+                    db.loggedUser(email, "IN");
                     Intent intent = new Intent(Login.this, Home.class);
                     Bundle b = new Bundle();
-                    b.putString("user", user);
+                    b.putString("email", email);
                     intent.putExtras(b);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);

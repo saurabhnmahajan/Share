@@ -16,14 +16,14 @@ import android.widget.ListView;
 
 public class Home extends ListActivity {
     DatabaseHandler db = new DatabaseHandler(this);
-    String user, contacts[], selectedContacts = "";
+    String email, contacts[], selectedContacts = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         Bundle b = getIntent().getExtras();
-        user = b.getString("user");
-        contacts = db.getAllContacts(user);
+        email = b.getString("email");
+        contacts = db.getAllContacts(email);
         final ArrayAdapter<String> myAdapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,contacts);
         setListAdapter(myAdapter);
         final ListView listView = getListView();
@@ -68,7 +68,7 @@ public class Home extends ListActivity {
                 selectedContacts = selectedContacts.substring(0, selectedContacts.lastIndexOf(','));
                 Intent intent = new Intent(Home.this, MapsActivity.class);
                 Bundle b = new Bundle();
-                b.putString("user", user);
+                b.putString("email", email);
                 b.putString("selectedContacts", selectedContacts);
                 intent.putExtras(b);
                 startActivity(intent);
@@ -84,7 +84,7 @@ public class Home extends ListActivity {
         String selectedContact = "'" + contacts[position] + "'";
         Intent intent = new Intent(Home.this, MapsActivity.class);
         Bundle b = new Bundle();
-        b.putString("user", user);
+        b.putString("email", email);
         b.putString("selectedContacts", selectedContact);
         intent.putExtras(b);
         startActivity(intent);
@@ -106,7 +106,7 @@ public class Home extends ListActivity {
             //add user to your list
             Intent intent = new Intent(Home.this, AddContact.class);
             Bundle b = new Bundle();
-            b.putString("user", user);
+            b.putString("email", email);
             intent.putExtras(b);
             startActivity(intent);
         }
@@ -114,7 +114,7 @@ public class Home extends ListActivity {
             return true;
         }
         else if (id == R.id.action_logout) {
-            db.loggedUser(user, "OUT");
+            db.loggedUser(email, "OUT");
             Intent intent = new Intent(Home.this,Launcher.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);

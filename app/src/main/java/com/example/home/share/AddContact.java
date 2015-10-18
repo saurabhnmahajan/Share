@@ -12,13 +12,13 @@ import android.widget.ListView;
 
 public class AddContact extends ListActivity {
     DatabaseHandler db = new DatabaseHandler(this);
-    private String user, searchList[];
+    private String email, searchList[];
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_contact);
         final Bundle b = getIntent().getExtras();
-        user = b.getString("user");
+        email = b.getString("email");
         Button search = (Button)findViewById(R.id.search);
         search.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -34,10 +34,10 @@ public class AddContact extends ListActivity {
     @Override
     protected void onListItemClick(ListView list, View view, int position, long id) {
         super.onListItemClick(list, view, position, id);
-        db.addContact(user, searchList[position]);
+        db.addContact(email, searchList[position]);
         Intent intent = new Intent(AddContact.this, Home.class);
         Bundle b = new Bundle();
-        b.putString("user", user);
+        b.putString("email", email);
         intent.putExtras(b);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
