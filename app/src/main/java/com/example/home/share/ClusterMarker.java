@@ -8,6 +8,7 @@ import com.amulyakhare.textdrawable.TextDrawable;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
@@ -37,6 +38,7 @@ class ClusterMarker extends DefaultClusterRenderer<MyLocation> {
         String markerText = marker.getEmail().substring(0, 1);
         BitmapDescriptor markerDescriptor = createCustomMarker(markerText);
         markerOptions.anchor(0.5f, 0.5f).icon(markerDescriptor);
+        Marker m = getMarker(marker);
     }
 
     public BitmapDescriptor createCustomMarker(String text) {

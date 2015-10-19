@@ -6,6 +6,8 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.widget.Toast;
+
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -67,6 +69,9 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
 
     @Override
     public void onLocationChanged(Location location) {
+        Toast.makeText(this, "Location changed", Toast.LENGTH_SHORT).show();
+        mClusterManager.clearItems();
+        mMap.clear();
         double latitude = location.getLatitude();
         double longitude = location.getLongitude();
         Bundle b = getIntent().getExtras();
