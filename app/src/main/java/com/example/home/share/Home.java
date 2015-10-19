@@ -12,6 +12,8 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import com.facebook.FacebookSdk;
+import com.facebook.login.LoginManager;
 
 
 public class Home extends ListActivity {
@@ -117,6 +119,8 @@ public class Home extends ListActivity {
             db.loggedUser(email, "OUT");
             Intent intent = new Intent(Home.this,Launcher.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            FacebookSdk.sdkInitialize(this.getApplicationContext());
+            LoginManager.getInstance().logOut();
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
