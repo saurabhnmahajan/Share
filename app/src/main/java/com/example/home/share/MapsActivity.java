@@ -28,6 +28,9 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        Bundle b = getIntent().getExtras();
+        email = b.getString("email");
+        selectedContacts =  b.getString("selectedContacts");
         setUpMapIfNeeded();
     }
 
@@ -74,10 +77,6 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
         mMap.clear();
         double latitude = location.getLatitude();
         double longitude = location.getLongitude();
-        Bundle b = getIntent().getExtras();
-        email = b.getString("email");
-        selectedContacts =  b.getString("selectedContacts");
-        db.updateUserLocation(email, latitude, longitude);
         addItems(email, latitude, longitude);
         final LatLng latLng = new LatLng(latitude, longitude);
         String loc[][] = db.getSelectedContactsLocation(selectedContacts);
@@ -90,12 +89,14 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
             LatLng tmp = new LatLng(tmp_lat, tmp_lng);
             boundsBuilder.include(tmp);
         }
+        mClusterManager.cluster();
         LatLngBounds bounds = boundsBuilder.build();
         zoomLvl = CameraUpdateFactory.newLatLngBounds(bounds, 10 , 10, 0);
         if (flag) {
             flag = false;
             mMap.animateCamera(zoomLvl);
         }
+        db.updateUserLocation(email, latitude, longitude);
     }
 
     @Override
@@ -114,12 +115,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
     }
 
     private void setUpCluster() {
-        // Initialize the manager with the context and the map.
-        // (Activity extends context, so we can pass 'this' in the constructor.)
         mClusterManager = new ClusterManager<MyLocation>(this, mMap);
-
-        // Point the map's listeners at the listeners implemented by the cluster
-        // manager.
         mClusterManager.setRenderer(new ClusterMarker(this, mMap, mClusterManager));
         mMap.setOnCameraChangeListener(mClusterManager);
         mMap.setOnMarkerClickListener(mClusterManager);
@@ -136,7 +132,6 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
     }
 
     private void addItems(String email, double lat, double lng) {
-        // Add ten cluster items in close proximity, for purposes of this example.
         MyLocation marker = new MyLocation(email, lat, lng);
         mClusterManager.addItem(marker);
     }
