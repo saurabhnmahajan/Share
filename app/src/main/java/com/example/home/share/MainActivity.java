@@ -59,6 +59,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        db.getAllLoggedUsers();
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_main);
         Button register = (Button)findViewById(R.id.register);
@@ -91,6 +92,7 @@ public class MainActivity extends Activity {
                     Intent intent = new Intent(MainActivity.this, Home.class);
                     Bundle b = new Bundle();
                     b.putString("email", newProfile.getId());
+                    b.putString("acc_type", "facebook");
                     intent.putExtras(b);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
@@ -98,19 +100,27 @@ public class MainActivity extends Activity {
             }
         };
         profileTracker.startTracking();
-
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
                     @Override
                     public void onConnected(Bundle bundle) {
-                        mShouldResolve = false;
+                        db.getAllLoggedUsers();
+                        if(db.getLoggedUser().length() > 0) {
+                            Log.d("google","logout1");
+                            googleLogout();
+                            db.removeLoggedUser();
+                            return;
+                        }
                         if (Plus.AccountApi.getAccountName(mGoogleApiClient) != null) {
+                            mShouldResolve = true;
                             String email = Plus.AccountApi.getAccountName(mGoogleApiClient);
                             Log.d("email", email);
                             db.loggedUser(email, "IN");
+                            Log.d("asdadf", "adad");
                             Intent intent = new Intent(MainActivity.this, Home.class);
                             Bundle b = new Bundle();
                             b.putString("email", email);
+                            b.putString("acc_type", "google");
                             intent.putExtras(b);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);
@@ -150,6 +160,7 @@ public class MainActivity extends Activity {
                 .addScope(new Scope(Scopes.PROFILE))
                 .addScope(new Scope(Scopes.EMAIL))
                 .build();
+        Log.d("asd","sdfsfs");
         findViewById(R.id.google_login_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -159,10 +170,20 @@ public class MainActivity extends Activity {
         });
     }
 
+    public void googleLogout() {
+        mShouldResolve = true;
+        if (mGoogleApiClient.isConnected()) {
+            Log.d("google","logout2");
+            Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
+            Plus.AccountApi.revokeAccessAndDisconnect(mGoogleApiClient);
+            mGoogleApiClient.disconnect();
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-//        mCallBackManager.onActivityResult(requestCode, resultCode, data);
+        mCallBackManager.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_SIGN_IN) {
             // If the error resolution was not successful we should not resolve further.
             if (resultCode != RESULT_OK) {
@@ -182,7 +203,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onStop() {
         super.onStop();
-        profileTracker.startTracking();
+        profileTracker.stopTracking();
         mGoogleApiClient.disconnect();
     }
 }

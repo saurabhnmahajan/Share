@@ -114,9 +114,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     // Getting All Users
-    public void getAllUsers() {
+    public void getAllLoggedUsers() {
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_USERS;
+        String selectQuery = "SELECT * FROM " + TABLE_LOGGED;
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         // looping through all rows and adding to list
@@ -124,8 +124,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             do {
                 Log.d("data", cursor.getString(0));
                 Log.d("data", cursor.getString(1));
-                Log.d("data", cursor.getString(2));
-                Log.d("data", cursor.getString(3));
             } while (cursor.moveToNext());
         }
     }
@@ -171,13 +169,26 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             // Inserting Row
             db.insert(TABLE_LOGGED, null, values);
         }
-        else if(status.equals("OUT")){
+        else if(status.equals("OUT")) {
             db.delete(TABLE_LOGGED, KEY_EMAIL + " = ?",
+                    new String[]{email});
+        }
+        else if(status.equals("google")) {
+            ContentValues values = new ContentValues();
+            values.put(KEY_STATUS, "OUT");
+            // updating row
+            db.update(TABLE_LOGGED, values, KEY_EMAIL + " = ?",
                     new String[]{email});
         }
         db.close(); // Closing database connection
     }
 
+    public void removeLoggedUser() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_LOGGED, KEY_STATUS + " = ?",
+                new String[]{"OUT"});
+        db.close();
+    }
     public String getLoggedUser() {
         String selectQuery = "SELECT * FROM " + TABLE_LOGGED;
         SQLiteDatabase db = this.getWritableDatabase();

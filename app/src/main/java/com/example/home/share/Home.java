@@ -18,13 +18,14 @@ import com.facebook.login.LoginManager;
 
 public class Home extends ListActivity {
     DatabaseHandler db = new DatabaseHandler(this);
-    String email, contacts[], selectedContacts = "";
+    String email, acc_type, contacts[], selectedContacts = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         Bundle b = getIntent().getExtras();
         email = b.getString("email");
+        acc_type = b.getString("acc_type");
         contacts = db.getAllContacts(email);
         final ArrayAdapter<String> myAdapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,contacts);
         setListAdapter(myAdapter);
@@ -109,6 +110,7 @@ public class Home extends ListActivity {
             Intent intent = new Intent(Home.this, AddContact.class);
             Bundle b = new Bundle();
             b.putString("email", email);
+            b.putString("acc_type", acc_type);
             intent.putExtras(b);
             startActivity(intent);
         }
@@ -116,11 +118,14 @@ public class Home extends ListActivity {
             return true;
         }
         else if (id == R.id.action_logout) {
-            db.loggedUser(email, "OUT");
-            Intent intent = new Intent(Home.this,Launcher.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            if(acc_type.equals("google"))
+                db.loggedUser(email, acc_type);
+            else
+                db.loggedUser(email, "OUT");
             FacebookSdk.sdkInitialize(this.getApplicationContext());
             LoginManager.getInstance().logOut();
+            Intent intent = new Intent(Home.this,MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
