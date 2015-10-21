@@ -25,7 +25,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String KEY_ID = "id";
     private static final String KEY_NAME = "name";
     private static final String KEY_EMAIL = "email";
-    private static final String KEY_PASSWORD = "password";
     private static final String KEY_LATITUDE = "latitude";
     private static final String KEY_LONGITUDE = "longitude";
     private static final String KEY_STATUS = "status";
@@ -42,7 +41,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String table_users = "CREATE TABLE " + TABLE_USERS + "("
                 + KEY_ID + " INTEGER PRIMARY KEY," + KEY_NAME + " TEXT,"
-                + KEY_EMAIL + " TEXT," + KEY_PASSWORD + " TEXT,"
+                + KEY_EMAIL + " TEXT,"
                 + KEY_LATITUDE + " NUMERIC,"
                 + KEY_LONGITUDE + " NUMERIC" +")";
         db.execSQL(table_users);
@@ -51,9 +50,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL(table_logged);
         String table_user_contacts = "CREATE TABLE " + TABLE_USER_CONTACTS + "("
                 + KEY_ID + " INTEGER PRIMARY KEY," + KEY_USER_ID + " INTEGER,"
-                + KEY_CONTACT + " TEXT,"
-                + KEY_LATITUDE + " NUMERIC,"
-                + KEY_LONGITUDE + " NUMERIC" +")";
+                + KEY_CONTACT + " TEXT" + ")";
         db.execSQL(table_user_contacts);
         Log.d("table", "created");
     }
@@ -64,6 +61,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // Drop older table if existed
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOGGED);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER_CONTACTS);
         // Create tables again
         onCreate(db);
     }
@@ -72,12 +70,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      * All CRUD(Create, Read, Update, Delete) Operations
      */
 
-    void addUser(String name, String email, String password) {
+    void addUser(String name, String email) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(KEY_NAME, name);
         values.put(KEY_EMAIL, email);
-        values.put(KEY_PASSWORD, password);
         values.put(KEY_LATITUDE, 0);
         values.put(KEY_LONGITUDE, 0);
 
