@@ -6,7 +6,6 @@ import android.content.IntentSender;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -66,22 +65,6 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_main);
-        Button register = (Button)findViewById(R.id.register);
-        register.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, RegisterUser.class);
-                startActivity(intent);
-            }
-        });
-        Button login = (Button)findViewById(R.id.login);
-        login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, Login.class);
-                startActivity(intent);
-            }
-        });
         mCallBackManager = CallbackManager.Factory.create();
         LoginButton fb_login = (LoginButton)findViewById(R.id.fb_login_button);
         fb_login.setReadPermissions(Arrays.asList("email, user_friends"));

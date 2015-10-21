@@ -21,7 +21,7 @@ public class Launcher extends Activity {
                 b.putString("acc_type", "google");
             }
             else {
-                b.putString("acc_type", "normal | facebook");
+                b.putString("acc_type", "facebook");
             }
             intent.putExtras(b);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
