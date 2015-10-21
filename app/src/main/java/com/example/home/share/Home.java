@@ -4,6 +4,7 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -116,7 +117,7 @@ public class Home extends ListActivity {
         }
         else if (id == R.id.action_logout) {
             if(acc_type.equals("google"))
-                db.loggedUser(email, acc_type);
+                db.loggedUser(email, "google_out");
             else
                 db.loggedUser(email, "OUT");
             FacebookSdk.sdkInitialize(this.getApplicationContext());

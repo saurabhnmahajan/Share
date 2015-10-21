@@ -12,6 +12,8 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
 import com.facebook.Profile;
 import com.facebook.ProfileTracker;
 import com.facebook.login.LoginResult;
@@ -23,11 +25,12 @@ import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 
+import org.json.JSONObject;
+
 import java.util.Arrays;
 
 public class MainActivity extends Activity {
     DatabaseHandler db = new DatabaseHandler(this);
-
     // google integration
     private GoogleApiClient mGoogleApiClient;
     /* Is there a ConnectionResult resolution in progress? */
@@ -40,10 +43,12 @@ public class MainActivity extends Activity {
     // facebook integration
     CallbackManager mCallBackManager;
     ProfileTracker profileTracker;
+    AccessToken accessToken;
+
     FacebookCallback<LoginResult> mCallback = new FacebookCallback<LoginResult>() {
         @Override
         public void onSuccess(LoginResult loginResult) {
-            AccessToken accessToken = loginResult.getAccessToken();
+            accessToken = loginResult.getAccessToken();
         }
 
         @Override
@@ -87,6 +92,36 @@ public class MainActivity extends Activity {
             protected void onCurrentProfileChanged(Profile oldProfile, Profile newProfile) {
                 if(newProfile != null) {
                     db.loggedUser(newProfile.getId(), "IN");
+
+
+
+                    Log.d("facebook","started");
+                    GraphRequest request = GraphRequest.newMeRequest(
+                            accessToken,
+                            new GraphRequest.GraphJSONObjectCallback() {
+                                @Override
+                                public void onCompleted(
+                                        JSONObject object,
+                                        GraphResponse response) {
+                                    Log.d("Response", response.getJSONObject().toString());
+                                    if (response.getError() != null) {
+                                        // handle error
+                                    } else {
+                                        String email = object.optString("email");
+                                        Log.d("Email", email);
+                                        //     Log.d("Response", response.getInnerJsobject.toString());
+
+                                    }
+                                }
+                            });
+                    request.executeAsync();
+                    Log.d("facebook", "ended");
+
+
+
+
+
+
                     Intent intent = new Intent(MainActivity.this, Home.class);
                     Bundle b = new Bundle();
                     b.putString("email", newProfile.getId());
@@ -102,7 +137,9 @@ public class MainActivity extends Activity {
                 .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
                     @Override
                     public void onConnected(Bundle bundle) {
-                        if(db.getLoggedUser().length() > 0) {
+                        String user[] = db.getLoggedUser();
+                        if(user != null && user[1].equalsIgnoreCase("OUT")) {
+                            Log.d("google", "logout");
                             googleLogout();
                             db.removeLoggedUser();
                             return;
@@ -110,7 +147,7 @@ public class MainActivity extends Activity {
                         if (Plus.AccountApi.getAccountName(mGoogleApiClient) != null) {
                             mShouldResolve = true;
                             String email = Plus.AccountApi.getAccountName(mGoogleApiClient);
-                            db.loggedUser(email, "IN");
+                            db.loggedUser(email, "google_in");
                             Intent intent = new Intent(MainActivity.this, Home.class);
                             Bundle b = new Bundle();
                             b.putString("email", email);

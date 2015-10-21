@@ -162,7 +162,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public void loggedUser(String email, String status) {
         SQLiteDatabase db = this.getWritableDatabase();
-        if(status.equals("IN")) {
+        if(status.equals("IN") || status.equals("google_in")) {
             ContentValues values = new ContentValues();
             values.put(KEY_EMAIL, email); // User Name
             values.put(KEY_STATUS, status); // User Name
@@ -173,7 +173,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             db.delete(TABLE_LOGGED, KEY_EMAIL + " = ?",
                     new String[]{email});
         }
-        else if(status.equals("google")) {
+        else if(status.equals("google_out")) {
             ContentValues values = new ContentValues();
             values.put(KEY_STATUS, "OUT");
             // updating row
@@ -190,16 +190,18 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close();
     }
 
-    public String getLoggedUser() {
+    public String[] getLoggedUser() {
         String selectQuery = "SELECT * FROM " + TABLE_LOGGED;
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
-            return cursor.getString(0);
+            String loggedUser[] = {cursor.getString(0), cursor.getString(1)};
+            return loggedUser;
         }
-        else
-            return "";
+        else {
+            return null;
+        }
     }
 
     public int checkUser(String email) {
