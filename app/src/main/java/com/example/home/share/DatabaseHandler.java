@@ -27,7 +27,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String KEY_EMAIL = "email";
     private static final String KEY_LATITUDE = "latitude";
     private static final String KEY_LONGITUDE = "longitude";
-    private static final String KEY_STATUS = "status";
+    private static final String KEY_ACC_TYPE = "acc_type";
     private static final String KEY_CONTACT = "contact";
     private static final String KEY_USER_ID = "user_id";
 
@@ -46,7 +46,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 + KEY_LONGITUDE + " NUMERIC" +")";
         db.execSQL(table_users);
         String table_logged = "CREATE TABLE " + TABLE_LOGGED + "("
-                + KEY_EMAIL + " TEXT," + KEY_STATUS + " TEXT" +")";
+                + KEY_EMAIL + " TEXT," + KEY_ACC_TYPE + " TEXT" +")";
         db.execSQL(table_logged);
         String table_user_contacts = "CREATE TABLE " + TABLE_USER_CONTACTS + "("
                 + KEY_ID + " INTEGER PRIMARY KEY," + KEY_USER_ID + " INTEGER,"
@@ -157,22 +157,22 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 new String[]{email});
     }
 
-    public void loggedUser(String email, String status) {
+    public void loggedUser(String email, String acc_type) {
         SQLiteDatabase db = this.getWritableDatabase();
-        if(status.equals("IN") || status.equals("google_in")) {
+        if(acc_type.equals("IN") || acc_type.equals("google_in")) {
             ContentValues values = new ContentValues();
             values.put(KEY_EMAIL, email); // User Name
-            values.put(KEY_STATUS, status); // User Name
+            values.put(KEY_ACC_TYPE, acc_type); // User Name
             // Inserting Row
             db.insert(TABLE_LOGGED, null, values);
         }
-        else if(status.equals("OUT")) {
+        else if(acc_type.equals("OUT")) {
             db.delete(TABLE_LOGGED, KEY_EMAIL + " = ?",
                     new String[]{email});
         }
-        else if(status.equals("google_out")) {
+        else if(acc_type.equals("google_out")) {
             ContentValues values = new ContentValues();
-            values.put(KEY_STATUS, "OUT");
+            values.put(KEY_ACC_TYPE, "OUT");
             // updating row
             db.update(TABLE_LOGGED, values, KEY_EMAIL + " = ?",
                     new String[]{email});
@@ -182,7 +182,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public void removeLoggedUser() {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_LOGGED, KEY_STATUS + " = ?",
+        db.delete(TABLE_LOGGED, KEY_ACC_TYPE + " = ?",
                 new String[]{"OUT"});
         db.close();
     }

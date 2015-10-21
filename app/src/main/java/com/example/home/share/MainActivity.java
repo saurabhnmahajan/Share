@@ -74,11 +74,7 @@ public class MainActivity extends Activity {
             @Override
             protected void onCurrentProfileChanged(Profile oldProfile, Profile newProfile) {
                 if(newProfile != null) {
-                    db.loggedUser(newProfile.getId(), "IN");
-
-
-
-                    Log.d("facebook","started");
+                    Log.d("facebook", "started");
                     GraphRequest request = GraphRequest.newMeRequest(
                             accessToken,
                             new GraphRequest.GraphJSONObjectCallback() {
@@ -104,14 +100,22 @@ public class MainActivity extends Activity {
 
 
 
-
-                    Intent intent = new Intent(MainActivity.this, Home.class);
-                    Bundle b = new Bundle();
-                    b.putString("email", newProfile.getId());
-                    b.putString("acc_type", "facebook");
-                    intent.putExtras(b);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
+                    String email = newProfile.getId();
+                    if(db.checkUser(email) > 0) {
+                        // already registered user.
+                        db.loggedUser(email, "IN");
+                        Intent intent = new Intent(MainActivity.this, Home.class);
+                        Bundle b = new Bundle();
+                        b.putString("email", email);
+                        b.putString("acc_type", "facebook");
+                        intent.putExtras(b);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                    }
+                    else {
+                        // new user
+                        db.addUser("", email);
+                    }
                 }
             }
         };
@@ -130,14 +134,21 @@ public class MainActivity extends Activity {
                         if (Plus.AccountApi.getAccountName(mGoogleApiClient) != null) {
                             mShouldResolve = true;
                             String email = Plus.AccountApi.getAccountName(mGoogleApiClient);
-                            db.loggedUser(email, "google_in");
-                            Intent intent = new Intent(MainActivity.this, Home.class);
-                            Bundle b = new Bundle();
-                            b.putString("email", email);
-                            b.putString("acc_type", "google");
-                            intent.putExtras(b);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            startActivity(intent);
+                            if(db.checkUser(email) > 0) {
+                                // already registered user.
+                                db.loggedUser(email, "google_in");
+                                Intent intent = new Intent(MainActivity.this, Home.class);
+                                Bundle b = new Bundle();
+                                b.putString("email", email);
+                                b.putString("acc_type", "google");
+                                intent.putExtras(b);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(intent);
+                            }
+                            else {
+                                // new user
+                                db.addUser("", email);
+                            }
                         }
                     }
 

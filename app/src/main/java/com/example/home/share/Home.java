@@ -118,10 +118,11 @@ public class Home extends ListActivity {
         else if (id == R.id.action_logout) {
             if(acc_type.equals("google"))
                 db.loggedUser(email, "google_out");
-            else
+            else {
                 db.loggedUser(email, "OUT");
-            FacebookSdk.sdkInitialize(this.getApplicationContext());
-            LoginManager.getInstance().logOut();
+                FacebookSdk.sdkInitialize(this.getApplicationContext());
+                LoginManager.getInstance().logOut();
+            }
             Intent intent = new Intent(Home.this,MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
