@@ -59,7 +59,6 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        db.getAllLoggedUsers();
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_main);
         Button register = (Button)findViewById(R.id.register);
@@ -87,7 +86,6 @@ public class MainActivity extends Activity {
             @Override
             protected void onCurrentProfileChanged(Profile oldProfile, Profile newProfile) {
                 if(newProfile != null) {
-                    Log.d("fb login", newProfile.getId());
                     db.loggedUser(newProfile.getId(), "IN");
                     Intent intent = new Intent(MainActivity.this, Home.class);
                     Bundle b = new Bundle();
@@ -104,9 +102,7 @@ public class MainActivity extends Activity {
                 .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
                     @Override
                     public void onConnected(Bundle bundle) {
-                        db.getAllLoggedUsers();
                         if(db.getLoggedUser().length() > 0) {
-                            Log.d("google","logout1");
                             googleLogout();
                             db.removeLoggedUser();
                             return;
@@ -114,9 +110,7 @@ public class MainActivity extends Activity {
                         if (Plus.AccountApi.getAccountName(mGoogleApiClient) != null) {
                             mShouldResolve = true;
                             String email = Plus.AccountApi.getAccountName(mGoogleApiClient);
-                            Log.d("email", email);
                             db.loggedUser(email, "IN");
-                            Log.d("asdadf", "adad");
                             Intent intent = new Intent(MainActivity.this, Home.class);
                             Bundle b = new Bundle();
                             b.putString("email", email);
@@ -160,7 +154,6 @@ public class MainActivity extends Activity {
                 .addScope(new Scope(Scopes.PROFILE))
                 .addScope(new Scope(Scopes.EMAIL))
                 .build();
-        Log.d("asd","sdfsfs");
         findViewById(R.id.google_login_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -173,7 +166,6 @@ public class MainActivity extends Activity {
     public void googleLogout() {
         mShouldResolve = true;
         if (mGoogleApiClient.isConnected()) {
-            Log.d("google","logout2");
             Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
             Plus.AccountApi.revokeAccessAndDisconnect(mGoogleApiClient);
             mGoogleApiClient.disconnect();
@@ -189,7 +181,6 @@ public class MainActivity extends Activity {
             if (resultCode != RESULT_OK) {
                 mShouldResolve = false;
             }
-
             mIsResolving = false;
             mGoogleApiClient.connect();
         }
@@ -200,6 +191,7 @@ public class MainActivity extends Activity {
         super.onStart();
         mGoogleApiClient.connect();
     }
+
     @Override
     protected void onStop() {
         super.onStop();

@@ -20,7 +20,6 @@ public class RegisterUser extends Activity {
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 String name = ((EditText)findViewById(R.id.name)).getText().toString();
                 String email = ((EditText)findViewById(R.id.email)).getText().toString();
                 String pwd = ((EditText)findViewById(R.id.password)).getText().toString();

@@ -189,6 +189,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 new String[]{"OUT"});
         db.close();
     }
+
     public String getLoggedUser() {
         String selectQuery = "SELECT * FROM " + TABLE_LOGGED;
         SQLiteDatabase db = this.getWritableDatabase();
