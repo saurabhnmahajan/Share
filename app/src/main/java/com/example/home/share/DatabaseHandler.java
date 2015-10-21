@@ -90,8 +90,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         int id = findUserId(user);
         values.put(KEY_USER_ID, id);
         values.put(KEY_CONTACT, contact);
-        values.put(KEY_LATITUDE, 0);
-        values.put(KEY_LONGITUDE, 0);
 
         // Inserting Row
         db.insert(TABLE_USER_CONTACTS, null, values);

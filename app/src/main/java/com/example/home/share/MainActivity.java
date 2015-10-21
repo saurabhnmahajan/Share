@@ -114,7 +114,16 @@ public class MainActivity extends Activity {
                     }
                     else {
                         // new user
-                        db.addUser("", email);
+                        String name = newProfile.getName();
+                        Log.d("name", name);
+                        db.addUser(name, email);
+                        Intent intent = new Intent(MainActivity.this, UserDetails.class);
+                        Bundle b = new Bundle();
+                        b.putString("name", name);
+                        b.putString("email", email);
+                        b.putString("acc_type", "facebook");
+                        intent.putExtras(b);
+                        startActivity(intent);
                     }
                 }
             }
@@ -147,7 +156,17 @@ public class MainActivity extends Activity {
                             }
                             else {
                                 // new user
-                                db.addUser("", email);
+                                Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
+                                String name = currentPerson.getDisplayName();
+                                Log.d("name", name);
+                                db.addUser(name, email);
+                                Intent intent = new Intent(MainActivity.this, UserDetails.class);
+                                Bundle b = new Bundle();
+                                b.putString("name", name);
+                                b.putString("email", email);
+                                b.putString("acc_type", "google");
+                                intent.putExtras(b);
+                                startActivity(intent);
                             }
                         }
                     }
