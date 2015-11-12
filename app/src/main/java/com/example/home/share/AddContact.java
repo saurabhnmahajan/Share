@@ -8,7 +8,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class AddContact extends ListActivity {
     DatabaseHandler db = new DatabaseHandler(this);
@@ -27,6 +29,9 @@ public class AddContact extends ListActivity {
                 EditText contact = (EditText)findViewById(R.id.search_contacts);
                 String searchContacts = contact.getText().toString();
                 searchList = db.search(searchContacts);
+                List<String> list = new ArrayList<String>(Arrays.asList(searchList));
+                list.remove(email);
+                searchList = list.toArray(new String[0]);
                 ArrayAdapter<String> myAdapter=new ArrayAdapter<String>(AddContact.this, android.R.layout.simple_list_item_1,searchList);
                 setListAdapter(myAdapter);
             }
