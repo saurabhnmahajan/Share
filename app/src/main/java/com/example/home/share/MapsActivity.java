@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -88,41 +89,14 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
         Toast.makeText(this, "Location changed", Toast.LENGTH_SHORT).show();
         mClusterManager.clearItems();
         mMap.clear();
-
-
-        ImageView imageView = new ImageView(this);
-        RelativeLayout.LayoutParams vp =
-                new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
-                        RelativeLayout.LayoutParams.WRAP_CONTENT);
-        imageView.setLayoutParams(vp);
-
-        IconGenerator icons = new IconGenerator(getApplicationContext());
-        int shapeSize = getResources().getDimensionPixelSize(R.dimen.shape_size);
-        // Define the size you want from dimensions file
-                TextDrawable drawable = TextDrawable.builder()
-                        .beginConfig()
-                        .width(60)  // width in px
-                        .height(60) // height in px
-                        .bold()
-                        .toUpperCase()
-                        .endConfig()
-                        .buildRound("asd", Color.RED);
-                icons.setBackground(drawable);
-                View view = new View(this);
-                view.setLayoutParams(new ViewGroup.LayoutParams(shapeSize, shapeSize));
-        icons.setContentView(view);
-        Bitmap bitmap = icons.makeIcon();
-        Drawable d = new BitmapDrawable(getResources(), bitmap);
-
-        imageView.setBackground(d);
-        RelativeLayout mapsView = (RelativeLayout)findViewById(R.id.mapsView);
-        mapsView.addView(imageView);
-
+        if(((LinearLayout)findViewById(R.id.key)).getChildCount() > 0)
+            ((LinearLayout)findViewById(R.id.key)).removeAllViews();
 
         double latitude = location.getLatitude();
         double longitude = location.getLongitude();
         addItems(email, latitude, longitude);
         final LatLng latLng = new LatLng(latitude, longitude);
+        createKeyPointer(email.substring(0,1), latLng);
         String loc[][] = db.getSelectedContactsLocation(selectedContacts);
         LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
         boundsBuilder.include(latLng);
@@ -131,6 +105,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
             double tmp_lat = Double.parseDouble(loc[contact][1]), tmp_lng = Double.parseDouble(loc[contact][2]);
             addItems(tmp_email, tmp_lat, tmp_lng);
             LatLng tmp = new LatLng(tmp_lat, tmp_lng);
+            createKeyPointer(tmp_email.substring(0,1), tmp);
             boundsBuilder.include(tmp);
         }
         mClusterManager.cluster();
@@ -178,5 +153,42 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
     private void addItems(String email, double lat, double lng) {
         MyLocation marker = new MyLocation(email, lat, lng);
         mClusterManager.addItem(marker);
+    }
+
+    private void createKeyPointer(String text, final LatLng pos) {
+        ImageView imageView = new ImageView(this);
+        RelativeLayout.LayoutParams vp =
+                new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
+                        RelativeLayout.LayoutParams.WRAP_CONTENT);
+        imageView.setLayoutParams(vp);
+
+        IconGenerator icons = new IconGenerator(getApplicationContext());
+        int shapeSize = getResources().getDimensionPixelSize(R.dimen.shape_size);
+        // Define the size you want from dimensions file
+        TextDrawable drawable = TextDrawable.builder()
+                .beginConfig()
+                .width(60)  // width in px
+                .height(60) // height in px
+                .bold()
+                .toUpperCase()
+                .endConfig()
+                .buildRound(text, Color.RED);
+        icons.setBackground(drawable);
+        View view = new View(this);
+        view.setLayoutParams(new ViewGroup.LayoutParams(shapeSize, shapeSize));
+        icons.setContentView(view);
+        Bitmap bitmap = icons.makeIcon();
+        Drawable d = new BitmapDrawable(getResources(), bitmap);
+
+        imageView.setBackground(d);
+        LinearLayout mapsView = (LinearLayout)findViewById(R.id.key);
+        mapsView.addView(imageView);
+
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(pos, 20.0f));
+            }
+        });
     }
 }
