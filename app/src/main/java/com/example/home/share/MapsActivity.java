@@ -1,19 +1,33 @@
 package com.example.home.share;
 
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
+
+import com.amulyakhare.textdrawable.TextDrawable;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.SupportMapFragment;import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
+import com.google.maps.android.ui.IconGenerator;
 
 public class MapsActivity extends FragmentActivity implements LocationListener {
 
@@ -74,6 +88,37 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
         Toast.makeText(this, "Location changed", Toast.LENGTH_SHORT).show();
         mClusterManager.clearItems();
         mMap.clear();
+
+
+        ImageView imageView = new ImageView(this);
+        RelativeLayout.LayoutParams vp =
+                new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
+                        RelativeLayout.LayoutParams.WRAP_CONTENT);
+        imageView.setLayoutParams(vp);
+
+        IconGenerator icons = new IconGenerator(getApplicationContext());
+        int shapeSize = getResources().getDimensionPixelSize(R.dimen.shape_size);
+        // Define the size you want from dimensions file
+                TextDrawable drawable = TextDrawable.builder()
+                        .beginConfig()
+                        .width(60)  // width in px
+                        .height(60) // height in px
+                        .bold()
+                        .toUpperCase()
+                        .endConfig()
+                        .buildRound("asd", Color.RED);
+                icons.setBackground(drawable);
+                View view = new View(this);
+                view.setLayoutParams(new ViewGroup.LayoutParams(shapeSize, shapeSize));
+        icons.setContentView(view);
+        Bitmap bitmap = icons.makeIcon();
+        Drawable d = new BitmapDrawable(getResources(), bitmap);
+
+        imageView.setBackground(d);
+        RelativeLayout mapsView = (RelativeLayout)findViewById(R.id.mapsView);
+        mapsView.addView(imageView);
+
+
         double latitude = location.getLatitude();
         double longitude = location.getLongitude();
         addItems(email, latitude, longitude);
