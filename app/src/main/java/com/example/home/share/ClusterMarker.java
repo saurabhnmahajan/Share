@@ -1,8 +1,6 @@
 package com.example.home.share;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import com.amulyakhare.textdrawable.TextDrawable;
@@ -17,11 +15,9 @@ import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.ui.IconGenerator;
 
 class ClusterMarker extends DefaultClusterRenderer<MyLocation> {
-    String markerColors;
-    IconGenerator icons;
-    View view;
-    int colorCounter = 0, shapeSize;
-    int color[] = {Color.RED, Color.BLUE, Color.CYAN, Color.GREEN, Color.DKGRAY};
+    private int markerColors, shapeSize;
+    private IconGenerator icons;
+    private View view;
     public ClusterMarker(Context context, GoogleMap map, ClusterManager clusterManager) {
         super(context, map, clusterManager);
         icons = new IconGenerator(context);
@@ -39,15 +35,12 @@ class ClusterMarker extends DefaultClusterRenderer<MyLocation> {
     protected void onBeforeClusterItemRendered(MyLocation marker, MarkerOptions markerOptions) {
         String markerText = marker.getEmail();
         markerColors = marker.getMarkerColors();
-        Log.d("sadasd", markerColors);
         BitmapDescriptor markerDescriptor = createCustomMarker(markerText);
         markerOptions.anchor(0.5f, 0.5f).icon(markerDescriptor);
         Marker m = getMarker(marker);
     }
 
     public BitmapDescriptor createCustomMarker(String markerText) {
-        colorCounter = Integer.parseInt(markerColors.charAt(markerColors.indexOf(markerText) + markerText.length()) + "");
-        Log.d("aaaa1", markerColors);
         TextDrawable drawable = TextDrawable.builder()
                 .beginConfig()
                 .width(60)  // width in px
@@ -55,7 +48,7 @@ class ClusterMarker extends DefaultClusterRenderer<MyLocation> {
                 .bold()
                 .toUpperCase()
                 .endConfig()
-                .buildRound(markerText.substring(0, 1), color[colorCounter]);
+                .buildRound(markerText.substring(0, 1), markerColors);
         icons.setBackground(drawable);
         view.setLayoutParams(new ViewGroup.LayoutParams(shapeSize, shapeSize));
         icons.setContentView(view);
