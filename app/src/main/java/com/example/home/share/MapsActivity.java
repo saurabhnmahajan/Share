@@ -16,16 +16,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
-
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.ui.IconGenerator;
@@ -36,7 +33,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
     private boolean flag = true;
     CameraUpdate zoomLvl;
     DatabaseHandler db = new DatabaseHandler(this);
-    String email, selectedContacts;
+    String email, selectedContacts, checkColors, markerColors;
     ClusterManager<MyLocation> mClusterManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,10 +91,11 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
 
         double latitude = location.getLatitude();
         double longitude = location.getLongitude();
-        addItems(email, latitude, longitude);
         final LatLng latLng = new LatLng(latitude, longitude);
-        createKeyPointer(email.substring(0,1), latLng);
         String loc[][] = db.getSelectedContactsLocation(selectedContacts);
+        colorGenerator(email, loc);
+        addItems(email, latitude, longitude);
+        createKeyPointer(email, latLng);
         LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
         boundsBuilder.include(latLng);
         for(int contact = 0; contact < loc.length; contact++) {
@@ -105,7 +103,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
             double tmp_lat = Double.parseDouble(loc[contact][1]), tmp_lng = Double.parseDouble(loc[contact][2]);
             addItems(tmp_email, tmp_lat, tmp_lng);
             LatLng tmp = new LatLng(tmp_lat, tmp_lng);
-            createKeyPointer(tmp_email.substring(0,1), tmp);
+            createKeyPointer(tmp_email, tmp);
             boundsBuilder.include(tmp);
         }
         mClusterManager.cluster();
@@ -151,11 +149,11 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
     }
 
     private void addItems(String email, double lat, double lng) {
-        MyLocation marker = new MyLocation(email, lat, lng);
+        MyLocation marker = new MyLocation(email, lat, lng, markerColors);
         mClusterManager.addItem(marker);
     }
 
-    private void createKeyPointer(String text, final LatLng pos) {
+    private void createKeyPointer(String email, final LatLng pos) {
         ImageView imageView = new ImageView(this);
         RelativeLayout.LayoutParams vp =
                 new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
@@ -165,6 +163,8 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
         IconGenerator icons = new IconGenerator(getApplicationContext());
         int shapeSize = getResources().getDimensionPixelSize(R.dimen.shape_size);
         // Define the size you want from dimensions file
+        int color[] = {Color.RED, Color.BLUE, Color.CYAN, Color.GREEN, Color.DKGRAY};
+        int counter = Integer.parseInt(markerColors.charAt(markerColors.indexOf(email) + email.length()) + "");
         TextDrawable drawable = TextDrawable.builder()
                 .beginConfig()
                 .width(60)  // width in px
@@ -172,7 +172,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
                 .bold()
                 .toUpperCase()
                 .endConfig()
-                .buildRound(text, Color.RED);
+                .buildRound(email.substring(0,1), color[counter]);
         icons.setBackground(drawable);
         View view = new View(this);
         view.setLayoutParams(new ViewGroup.LayoutParams(shapeSize, shapeSize));
@@ -190,5 +190,22 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(pos, 20.0f));
             }
         });
+    }
+
+    public void colorGenerator(String email, String contacts[][]) {
+        int colorCounter = 0;
+        checkColors = email.substring(0,1) + colorCounter;
+        markerColors = email + colorCounter;
+        colorCounter++;
+        for(int contact=0; contact<contacts.length; contact++) {
+            while(checkColors.contains(contacts[0][contact].substring(0,1) + colorCounter)) {
+                colorCounter++;
+            }
+            markerColors += contacts[0][contact] + colorCounter;
+            checkColors += contacts[0][contact].substring(0,1) + colorCounter;
+            if( colorCounter >= 5) {
+                colorCounter = 0;
+            }
+        }
     }
 }

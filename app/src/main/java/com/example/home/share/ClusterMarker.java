@@ -17,7 +17,7 @@ import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.ui.IconGenerator;
 
 class ClusterMarker extends DefaultClusterRenderer<MyLocation> {
-    String markerColors = "", checkColors = "";
+    String markerColors;
     IconGenerator icons;
     View view;
     int colorCounter = 0, shapeSize;
@@ -38,28 +38,16 @@ class ClusterMarker extends DefaultClusterRenderer<MyLocation> {
     @Override
     protected void onBeforeClusterItemRendered(MyLocation marker, MarkerOptions markerOptions) {
         String markerText = marker.getEmail();
+        markerColors = marker.getMarkerColors();
+        Log.d("sadasd", markerColors);
         BitmapDescriptor markerDescriptor = createCustomMarker(markerText);
         markerOptions.anchor(0.5f, 0.5f).icon(markerDescriptor);
         Marker m = getMarker(marker);
     }
 
     public BitmapDescriptor createCustomMarker(String markerText) {
-        boolean flag = false;
-        while(checkColors.contains(markerText.substring(0,1) + colorCounter)) {
-            colorCounter++;
-        }
-        if(markerColors.contains(markerText)) {
-            flag = true;
-        }
-        if (flag) {
-            colorCounter = Integer.parseInt(markerColors.charAt(markerColors.indexOf(markerText) + markerText.length()) + "");
-        }
-        else {
-            markerColors += markerText + colorCounter;
-            checkColors += markerText.substring(0,1) + colorCounter;
-        }
+        colorCounter = Integer.parseInt(markerColors.charAt(markerColors.indexOf(markerText) + markerText.length()) + "");
         Log.d("aaaa1", markerColors);
-        Log.d("aaaa2", checkColors);
         TextDrawable drawable = TextDrawable.builder()
                 .beginConfig()
                 .width(60)  // width in px
@@ -69,10 +57,6 @@ class ClusterMarker extends DefaultClusterRenderer<MyLocation> {
                 .endConfig()
                 .buildRound(markerText.substring(0, 1), color[colorCounter]);
         icons.setBackground(drawable);
-        colorCounter++;
-        if( colorCounter >= color.length) {
-            colorCounter = 0;
-        }
         view.setLayoutParams(new ViewGroup.LayoutParams(shapeSize, shapeSize));
         icons.setContentView(view);
         return (BitmapDescriptorFactory.fromBitmap(icons.makeIcon()));
