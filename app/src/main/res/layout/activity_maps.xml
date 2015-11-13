@@ -1,15 +1,24 @@
 <RelativeLayout
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:map="http://schemas.android.com/apk/res-auto">
-    <TextView
-        android:id="@+id/loc"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    android:id="@+id/mapsView"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 <fragment xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" android:id="@+id/map" tools:context=".MapsActivity"
     android:name="com.google.android.gms.maps.SupportMapFragment"
     />
+    <HorizontalScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true">
+        <LinearLayout
+            android:id="@+id/key"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="horizontal"
+            android:layout_gravity="right"></LinearLayout>
+    </HorizontalScrollView>
 </RelativeLayout>
