@@ -71,6 +71,8 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
                 .setMyLocationButtonEnabled(false);
         mMap.getUiSettings()
                 .setAllGesturesEnabled(true);
+        mMap.getUiSettings()
+                .setZoomControlsEnabled(false);
         setUpCluster();
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         Criteria criteria = new Criteria();
