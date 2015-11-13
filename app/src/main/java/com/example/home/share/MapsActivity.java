@@ -32,7 +32,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private boolean flag = true;
     private CameraUpdate zoomLvl;
-    private int colorCounter, color[] = {Color.RED, Color.BLUE, Color.CYAN, Color.GREEN, Color.DKGRAY};
+    private int colorCounter, keyNo = 0, color[] = {Color.RED, Color.BLUE, Color.CYAN, Color.GREEN, Color.DKGRAY};
     private DatabaseHandler db = new DatabaseHandler(this);
     private String email, selectedContacts, checkColors, markerColors;
     private ClusterManager<MyLocation> mClusterManager;
@@ -89,17 +89,20 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
         LatLng latLng;
         String loc[][];
         //clearing map contents
+        keyNo = 0;
         colorCounter = 0;
         checkColors = null;
         markerColors = null;
         mClusterManager.clearItems();
         mMap.clear();
+        if(((LinearLayout)findViewById(R.id.key)).getChildCount() > 0)
+                                                                                                                                                                                                                                                        ((LinearLayout)findViewById(R.id.key)).removeAllViews();
 
         latitude = location.getLatitude();
         longitude = location.getLongitude();
         latLng = new LatLng(latitude, longitude);
         loc = db.getSelectedContactsLocation(selectedContacts);
-
+                                
         addItems(email, latitude, longitude, color[colorGenerator(email)]);
         createKeyPointer(email, latLng);
 
@@ -178,7 +181,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
                 .bold()
                 .toUpperCase()
                 .endConfig()
-                .buildRound(email.substring(0,1), color[counter]);
+                .buildRound(email.substring(0, 1), color[counter]);
         icons.setBackground(drawable);
         View view = new View(this);
         view.setLayoutParams(new ViewGroup.LayoutParams(shapeSize, shapeSize));
@@ -188,7 +191,12 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
 
         imageView.setBackground(d);
         LinearLayout mapsView = (LinearLayout)findViewById(R.id.key);
-        mapsView.addView(imageView);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        layoutParams.setMargins(10, 0, 0, 0);
+        imageView.setLayoutParams(layoutParams);
+        mapsView.addView(imageView, 0);
+        keyNo++;
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
