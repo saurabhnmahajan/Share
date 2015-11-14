@@ -1,6 +1,7 @@
 package com.example.home.share;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import com.amulyakhare.textdrawable.TextDrawable;
@@ -38,7 +39,16 @@ class ClusterMarker extends DefaultClusterRenderer<MyLocation> {
         BitmapDescriptor markerDescriptor = createCustomMarker(markerText);
         markerOptions.anchor(0.5f, 0.5f).icon(markerDescriptor);
         Marker m = getMarker(marker);
+        setOnClusterItemClickListener(new ClusterManager.OnClusterItemClickListener<MyLocation>() {
+            @Override
+            public boolean onClusterItemClick(MyLocation myLocation) {
+                Log.d("cluster item clicked",myLocation.getEmail());
+                return false;
+            }
+        });
+
     }
+
 
     public BitmapDescriptor createCustomMarker(String markerText) {
         TextDrawable drawable = TextDrawable.builder()
