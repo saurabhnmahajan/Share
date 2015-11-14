@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -91,7 +92,6 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
                 LinearLayout markerMenu = (LinearLayout)findViewById(R.id.markerMenu);
                 if(markerMenu.getChildCount() > 0)
                     markerMenu.removeAllViews();
-                markerMenu.setLayoutParams(new LinearLayout.LayoutParams(0, 0, 1));
             }
         });
     }
@@ -240,7 +240,14 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
         LinearLayout layout = (LinearLayout) findViewById(R.id.markerMenu);
         Button route = new Button(this);
         route.setText(myLocation.getEmail());
-        layout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
         layout.addView(route);
+        layout.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                mMap.setPadding(0, 0, 0, bottom - top);
+                HorizontalScrollView keyContainer = (HorizontalScrollView)findViewById(R.id.keyContainer);
+                keyContainer.setPadding(0, 0, 0, bottom - top);
+            }
+        });
     }
 }
