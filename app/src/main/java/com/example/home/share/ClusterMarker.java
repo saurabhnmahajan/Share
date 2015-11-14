@@ -1,6 +1,7 @@
 package com.example.home.share;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import com.amulyakhare.textdrawable.TextDrawable;
@@ -37,8 +38,8 @@ class ClusterMarker extends DefaultClusterRenderer<MyLocation> {
         markerColors = marker.getMarkerColors();
         BitmapDescriptor markerDescriptor = createCustomMarker(markerText);
         markerOptions.anchor(0.5f, 0.5f).icon(markerDescriptor);
-        Marker m = getMarker(marker);
     }
+
 
     public BitmapDescriptor createCustomMarker(String markerText) {
         TextDrawable drawable = TextDrawable.builder()
