@@ -1,29 +1,38 @@
-<RelativeLayout
+<LinearLayout
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     android:id="@+id/mapsView"
+    android:orientation="vertical"
+    android:weightSum="5"
     xmlns:android="http://schemas.android.com/apk/res/android">
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="wrap_content"
-    android:layout_height="wrap_content" android:id="@+id/map" tools:context=".MapsActivity"
-    android:name="com.google.android.gms.maps.SupportMapFragment"
-    />
-    <HorizontalScrollView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true">
-        <LinearLayout
-            android:id="@+id/key"
+    <RelativeLayout
+        android:id="@+id/MapView"
+        android:layout_weight="5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools" android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:id="@+id/map" tools:context=".MapsActivity"
+            android:name="com.google.android.gms.maps.SupportMapFragment"/>
+        <HorizontalScrollView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:orientation="horizontal"
-            android:layout_gravity="right"></LinearLayout>
-    </HorizontalScrollView>
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true">
+            <LinearLayout
+                android:id="@+id/key"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:orientation="horizontal"
+                android:layout_gravity="right"></LinearLayout>
+        </HorizontalScrollView>
+    </RelativeLayout>
     <LinearLayout
         android:id="@+id/markerMenu"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"></LinearLayout>
-</RelativeLayout>
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:animateLayoutChanges="true"></LinearLayout>
+</LinearLayout>

@@ -38,15 +38,6 @@ class ClusterMarker extends DefaultClusterRenderer<MyLocation> {
         markerColors = marker.getMarkerColors();
         BitmapDescriptor markerDescriptor = createCustomMarker(markerText);
         markerOptions.anchor(0.5f, 0.5f).icon(markerDescriptor);
-        Marker m = getMarker(marker);
-        setOnClusterItemClickListener(new ClusterManager.OnClusterItemClickListener<MyLocation>() {
-            @Override
-            public boolean onClusterItemClick(MyLocation myLocation) {
-                Log.d("cluster item clicked",myLocation.getEmail());
-                return false;
-            }
-        });
-
     }
 
 

@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -32,7 +33,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private boolean flag = true;
     private CameraUpdate zoomLvl;
-    private int colorCounter, keyNo = 0, color[] = {Color.RED, Color.BLUE, Color.CYAN, Color.GREEN, Color.DKGRAY};
+    private int colorCounter, color[] = {Color.RED, Color.BLUE, Color.CYAN, Color.GREEN, Color.DKGRAY};
     private DatabaseHandler db = new DatabaseHandler(this);
     private String email, selectedContacts, checkColors, markerColors;
     private ClusterManager<MyLocation> mClusterManager;
@@ -73,6 +74,8 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
                 .setAllGesturesEnabled(true);
         mMap.getUiSettings()
                 .setZoomControlsEnabled(false);
+        mMap.getUiSettings()
+                .setMapToolbarEnabled(false);
         setUpCluster();
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         Criteria criteria = new Criteria();
@@ -82,6 +85,15 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
         if (location != null) {
             onLocationChanged(location);
         }
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                LinearLayout markerMenu = (LinearLayout)findViewById(R.id.markerMenu);
+                if(markerMenu.getChildCount() > 0)
+                    markerMenu.removeAllViews();
+                markerMenu.setLayoutParams(new LinearLayout.LayoutParams(0, 0, 1));
+            }
+        });
     }
 
     @Override
@@ -91,14 +103,13 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
         LatLng latLng;
         String loc[][];
         //clearing map contents
-        keyNo = 0;
         colorCounter = 0;
         checkColors = null;
         markerColors = null;
         mClusterManager.clearItems();
         mMap.clear();
         if(((LinearLayout)findViewById(R.id.key)).getChildCount() > 0)
-                                                                                                                                                                                                                                                        ((LinearLayout)findViewById(R.id.key)).removeAllViews();
+            ((LinearLayout)findViewById(R.id.key)).removeAllViews();
 
         latitude = location.getLatitude();
         longitude = location.getLongitude();
@@ -159,6 +170,13 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
                 return true;
             }
         });
+        mClusterManager.setOnClusterItemClickListener(new ClusterManager.OnClusterItemClickListener<MyLocation>() {
+            @Override
+            public boolean onClusterItemClick(MyLocation myLocation) {
+                createMarkerMenu(myLocation);
+                return false;
+            }
+        });
     }
 
     private void addItems(String email, double lat, double lng, int markerColor) {
@@ -198,7 +216,6 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
         layoutParams.setMargins(10, 0, 0, 0);
         imageView.setLayoutParams(layoutParams);
         mapsView.addView(imageView, 0);
-        keyNo++;
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -217,5 +234,13 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
         checkColors += email.substring(0,1) + colorCounter;
         markerColors += email + colorCounter;
         return colorCounter++;
+    }
+
+    public void createMarkerMenu(MyLocation myLocation) {
+        LinearLayout layout = (LinearLayout) findViewById(R.id.markerMenu);
+        Button route = new Button(this);
+        route.setText(myLocation.getEmail());
+        layout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+        layout.addView(route);
     }
 }
