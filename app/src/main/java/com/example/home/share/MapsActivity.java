@@ -237,11 +237,13 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
     }
 
     public void createMarkerMenu(MyLocation myLocation) {
-        LinearLayout layout = (LinearLayout) findViewById(R.id.markerMenu);
+        LinearLayout markerMenu = (LinearLayout) findViewById(R.id.markerMenu);
+        if(markerMenu.getChildCount() > 0)
+            markerMenu.removeAllViews();
         Button route = new Button(this);
         route.setText(myLocation.getEmail());
-        layout.addView(route);
-        layout.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+        markerMenu.addView(route);
+        markerMenu.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
             public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
                 mMap.setPadding(0, 0, 0, bottom - top);
